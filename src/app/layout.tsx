@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Head from "next/head";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,9 +25,32 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <head>
+        {/* Injecting Chatbot and Tailwind Scripts into Head */}
+        <script defer src="https://cdn.tailwindcss.com"></script>
+        <script defer src="https://c20.live/script/chatbot-embed.js"></script>
+        <script
+          defer
+          dangerouslySetInnerHTML={{
+            __html: `
+              document.addEventListener('DOMContentLoaded', function() {
+                if (window.initializeChatbot) {
+                  window.initializeChatbot("678d03a2ed4463f30d184c58");
+                  return;
+                }
+                const checkInitialize = setInterval(function() {
+                  if (window.initializeChatbot) {
+                    window.initializeChatbot("678d03a2ed4463f30d184c58");
+                    clearInterval(checkInitialize);
+                  }
+                }, 100);
+                setTimeout(() => clearInterval(checkInitialize), 10000);
+              });
+            `,
+          }}
+        />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>
